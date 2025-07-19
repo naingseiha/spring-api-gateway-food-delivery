@@ -1,0 +1,9 @@
+server:
+    port: 8181
+spring:
+  application:
+    name: api-gateway
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/api_gateway
+    username: naingseiha
+    password: #Iamaprogrammer@1
