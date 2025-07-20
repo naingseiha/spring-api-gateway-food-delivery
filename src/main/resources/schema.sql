@@ -10,5 +10,6 @@ CREATE TABLE IF NOT EXISTS api_route (
     status VARCHAR(20) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP,
-    updated_by VARCHAR(255),
+    created_by VARCHAR(255),
+    updated_by VARCHAR(255)
 )

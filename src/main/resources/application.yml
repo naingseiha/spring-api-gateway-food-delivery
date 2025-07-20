@@ -4,6 +4,7 @@ spring:
   application:
     name: api-gateway
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/api_gateway
+    url: r2dbc:postgresql://localhost:5432/food_delivery
     username: naingseiha
     password: #Iamaprogrammer@1
+
