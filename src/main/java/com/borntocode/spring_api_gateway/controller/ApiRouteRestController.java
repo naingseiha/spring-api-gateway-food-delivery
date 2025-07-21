@@ -5,6 +5,7 @@ import com.borntocode.spring_api_gateway.dto.ApiRouteResponse;
 import com.borntocode.spring_api_gateway.exception.ApiResponse;
 import com.borntocode.spring_api_gateway.exception.RouteNotFoundException;
 import com.borntocode.spring_api_gateway.service.ApiRouteService;
+import com.borntocode.spring_api_gateway.service.impl.GatewayRouteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,15 @@ import java.util.List;
 
 public class ApiRouteRestController {
     private final ApiRouteService apiRouteService;
+    private final GatewayRouteService gatewayRouteService;
+
+    @PostMapping("/refresh-routes")
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<Void> refreshRoutes() {
+        log.info("Refreshing routes");
+        gatewayRouteService.refreshRoutes();
+        return Mono.empty();
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)

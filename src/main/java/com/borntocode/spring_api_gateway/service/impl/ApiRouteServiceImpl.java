@@ -20,12 +20,13 @@ import java.time.LocalDate;
 public class ApiRouteServiceImpl implements ApiRouteService {
 
     private final ApiRouteRepository apiRouteRepository;
+    private final GatewayRouteService gatewayRouteService;
 
     @Override
     public Mono<ApiRouteResponse> create(ApiRouteRequest apiRouteRequest) {
         ApiRoute apiRoute = convertRouteRequestToApiRoute(apiRouteRequest);
         return apiRouteRepository.save(apiRoute)
-                .doOnSuccess(route-> log.info("Route created successfully: {}", route))
+                .doOnSuccess(newRoute -> gatewayRouteService.refreshRoutes())
                 .map(this::convertApiRouteToRouteResponse)
                 .onErrorMap(ex-> {
                     log.error("Error while creating route: {}", ex.getMessage());
@@ -44,7 +45,7 @@ public class ApiRouteServiceImpl implements ApiRouteService {
                 apiRouteRequest.status(),
                 "admin"
         ).switchIfEmpty(Mono.error(new RouteNotFoundException("Route with id " + id + " not found.")))
-                .doOnSuccess(route-> log.info("Route updated successfully: {}", route))
+                .doOnSuccess(updateRoute -> gatewayRouteService.refreshRoutes())
                 .map(this::convertApiRouteToRouteResponse);
     }
 
@@ -74,11 +75,14 @@ public class ApiRouteServiceImpl implements ApiRouteService {
 
     @Override
     public Mono<Void> deleteById(Long id) {
-        return apiRouteRepository.deleteAllById(id)
-                .doOnSuccess(aVoid -> log.info("Route with id {} deleted successfully", id))
-                .onErrorResume(ex -> {
-                    log.error("Error while deleting route with id {}: {}", id, ex.getMessage());
-                    return Mono.error(new RouteNotFoundException("Route with id " + id + " not found."));
+        return apiRouteRepository.findFirstById(id)
+                .switchIfEmpty(Mono.error(new RouteNotFoundException("Route with id " + id + " not found.")))
+                .flatMap(apiRoute -> apiRouteRepository.deleteById(id)
+                        .doOnSuccess(unused -> gatewayRouteService.refreshRoutes())
+                        .then())
+                .onErrorResume(RouteNotFoundException.class, ex -> {
+                    log.error("Error while deleting route: {}", ex.getMessage());
+                    return Mono.error(ex);
                 });
     }
 
