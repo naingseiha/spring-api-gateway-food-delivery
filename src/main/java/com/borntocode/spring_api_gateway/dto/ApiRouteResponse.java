@@ -11,6 +11,10 @@ public record ApiRouteResponse(
         String method,
         String description,
         @JsonProperty("group_code") String groupCode,
+        @JsonProperty("rate_limit")
+        Integer rateLimit,
+        @JsonProperty("rate_limit_duration")
+        Integer rateLimitDuration,
         String status,
         @JsonProperty("created_at") String createdAt,
         @JsonProperty("created_by") String createdBy,

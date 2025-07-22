@@ -10,6 +10,10 @@ public record ApiRouteRequest(
         String description,
         @JsonProperty("group_code")
         String groupCode,
+        @JsonProperty("rate_limit")
+        Integer rateLimit,
+        @JsonProperty("rate_limit_duration")
+        Integer rateLimitDuration,
         String status,
         String createdBy,
         String updatedBy

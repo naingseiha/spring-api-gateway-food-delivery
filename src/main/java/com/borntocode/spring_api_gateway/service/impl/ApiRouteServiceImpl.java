@@ -24,7 +24,7 @@ public class ApiRouteServiceImpl implements ApiRouteService {
 
     @Override
     public Mono<ApiRouteResponse> create(ApiRouteRequest apiRouteRequest) {
-        ApiRoute apiRoute = convertRouteRequestToApiRoute(apiRouteRequest);
+        ApiRoute apiRoute = convertApiRouteRequestToApiRoute(apiRouteRequest);
         return apiRouteRepository.save(apiRoute)
                 .doOnSuccess(newRoute -> gatewayRouteService.refreshRoutes())
                 .map(this::convertApiRouteToRouteResponse)
@@ -86,7 +86,7 @@ public class ApiRouteServiceImpl implements ApiRouteService {
                 });
     }
 
-    public ApiRoute convertRouteRequestToApiRoute(ApiRouteRequest apiRouteRequest) {
+    public ApiRoute convertApiRouteRequestToApiRoute(ApiRouteRequest apiRouteRequest) {
         return ApiRoute.builder()
                 .id(apiRouteRequest.id())
                 .uri(apiRouteRequest.uri())
@@ -94,6 +94,8 @@ public class ApiRouteServiceImpl implements ApiRouteService {
                 .method(apiRouteRequest.method())
                 .description(apiRouteRequest.description())
                 .groupCode(apiRouteRequest.groupCode())
+                .rateLimit(apiRouteRequest.rateLimit())
+                .rateLimitDuration(apiRouteRequest.rateLimitDuration())
                 .status(apiRouteRequest.status())
                 .createdBy("admin")
                 .createdAt(LocalDate.now())
@@ -108,6 +110,8 @@ public class ApiRouteServiceImpl implements ApiRouteService {
                 .method(apiRoute.getMethod())
                 .description(apiRoute.getDescription())
                 .groupCode(apiRoute.getGroupCode())
+                .rateLimit(apiRoute.getRateLimit())
+                .rateLimitDuration(apiRoute.getRateLimitDuration() != null ? apiRoute.getRateLimitDuration() : null)
                 .status(apiRoute.getStatus())
                 .createdAt(apiRoute.getCreatedAt().toString())
                 .createdBy(apiRoute.getCreatedBy())

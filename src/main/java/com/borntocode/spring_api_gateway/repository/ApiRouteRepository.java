@@ -32,4 +32,9 @@ public interface ApiRouteRepository extends R2dbcRepository <ApiRoute, Long>{
                                String status,
                                String updatedBy);
 
+    @Query("""
+    SELECT * FROM api_route WHERE path = :path AND method = :method
+    """)
+    Mono<ApiRoute> findFirstByPathAndMethod(String path, String method);
+
 }
